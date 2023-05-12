@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-agent-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azure-agent
+  template:
+    metadata:
+      labels:
+        app: azure-agent
+    spec:
+      containers:
+      - name: azure-agent
+        image: mcr.microsoft.com/azure-pipelines/vsts-agent:latest
+        env:
+        - name: AZP_URL
+          value: "https://dev.azure.com/DevOps-RD/"
+        - name: AZP_TOKEN
+          value: "ryb7mb7ibzblimia6keosiclesmlmotukyxzzoipsv4y2fpjibna"
+        - name: AZP_POOL
+          value: "ST2_Pipegen"
+        - name: AZP_AGENT_NAME
+          value: "Test-k8s-agent"
+        volumeMounts:
+        - name: azure-devops-pipeline
+          mountPath: /var/run/azure-pipelines-agent
+      volumes:
+      - name: azure-devops-pipeline
+        emptyDir: {}
+      restartPolicy: Always
